@@ -1,0 +1,382 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  height: 100%;
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  overflow: hidden;
+  background: linear-gradient(160deg, #fff8e1 0%, #fdecb2 55%, #fbe08a 100%);
+}
+
+.screen {
+  position: fixed;
+  inset: 0;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  text-align: center;
+  padding: 24px;
+}
+
+.screen.active {
+  display: flex;
+}
+
+/* Intro */
+#intro {
+  background: linear-gradient(160deg, #f4ecff 0%, #e5d4fb 55%, #d6bff5 100%);
+}
+
+.intro-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 22px;
+  animation: fadeIn 1.2s ease;
+}
+
+.intro-hint {
+  color: #8a6d1d;
+  font-size: 1.05rem;
+  letter-spacing: 0.3px;
+}
+
+.open-btn {
+  border: none;
+  background: #a875d9;
+  color: #fff;
+  font-size: 1.1rem;
+  font-weight: 600;
+  padding: 16px 34px;
+  border-radius: 50px;
+  cursor: pointer;
+  box-shadow: 0 8px 20px rgba(168, 117, 217, 0.45);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.open-btn:hover {
+  transform: translateY(-2px) scale(1.03);
+  box-shadow: 0 10px 26px rgba(168, 117, 217, 0.55);
+}
+
+.open-btn:active {
+  transform: scale(0.97);
+}
+
+/* Escena principal */
+/* .flowers y .message-box se posicionan de forma fija e independiente
+   (no en flujo flex) para que un mensaje largo nunca recorra a las flores */
+#scene {
+  --ftop: 9%;
+  --fh: clamp(120px, 22vh, 210px);
+  --gap: clamp(14px, 3.5vh, 28px);
+  --bw: min(94vw, 650px);
+}
+
+.bg-flowers {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.bg-flower {
+  --tilt: 0deg;
+  --op: 0.6;
+  position: absolute;
+  opacity: 0;
+  transform: translateY(14px) scale(0.5) rotate(var(--tilt));
+  animation: bgBloom 1s ease forwards, bgTwinkle 8s ease-in-out infinite;
+}
+
+.bg-flower svg {
+  width: 100%;
+  height: auto;
+  display: block;
+  filter: drop-shadow(0 3px 6px rgba(120, 85, 10, 0.15));
+}
+
+@keyframes bgBloom {
+  to {
+    opacity: var(--op);
+    transform: translateY(0) scale(1) rotate(var(--tilt));
+  }
+}
+
+@keyframes bgTwinkle {
+  0%, 100% { opacity: var(--op); }
+  50% { opacity: 0; }
+}
+
+.flowers {
+  position: absolute;
+  top: var(--ftop);
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1;
+  height: var(--fh);
+  width: min(94vw, 650px);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.flowers::before {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  width: min(60vw, 460px);
+  height: min(60vw, 460px);
+  transform: translateX(-50%);
+  background: radial-gradient(circle, rgba(255, 213, 79, 0.45) 0%, rgba(255, 213, 79, 0) 70%);
+  filter: blur(4px);
+  pointer-events: none;
+}
+
+.bouquet-wrap {
+  position: absolute;
+  left: 50%;
+  bottom: -6px;
+  transform: translateX(-50%);
+  width: min(50vw, 260px);
+  height: 42%;
+  z-index: 0;
+  filter: drop-shadow(0 6px 10px rgba(120, 85, 10, 0.2));
+}
+
+.bouquet-wrap svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.bouquet-bow {
+  position: absolute;
+  left: 50%;
+  bottom: 30%;
+  transform: translateX(-50%);
+  width: min(15vw, 78px);
+  z-index: 3;
+  filter: drop-shadow(0 3px 5px rgba(120, 85, 10, 0.25));
+}
+
+.bouquet-bow svg {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.side-bouquet {
+  position: absolute;
+  top: calc(var(--ftop) + 3%);
+  z-index: 0;
+  height: calc(var(--fh) * 0.78);
+  width: min(34vw, 190px);
+  display: flex;
+  align-items: flex-end;
+  pointer-events: none;
+  opacity: 0.88;
+}
+
+.side-left {
+  right: calc(50% + clamp(80px, 11vw, 115px));
+  justify-content: flex-end;
+}
+
+.side-right {
+  left: calc(50% + clamp(80px, 11vw, 115px));
+  justify-content: flex-start;
+}
+
+.flower {
+  --tilt: 0deg;
+  width: clamp(48px, 9vw, 90px);
+  opacity: 0;
+  transform: translateY(40px) scale(0.6);
+  animation: bloom 0.9s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+@keyframes bloom {
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1) rotate(var(--tilt));
+  }
+}
+
+.flower svg {
+  width: 100%;
+  height: auto;
+  display: block;
+  filter: drop-shadow(0 8px 12px rgba(120, 85, 10, 0.22));
+}
+
+.flower.sway {
+  animation: bloom 0.9s cubic-bezier(0.34, 1.56, 0.64, 1) forwards,
+             sway 4.5s ease-in-out infinite 0.9s;
+  transform-origin: bottom center;
+}
+
+@keyframes sway {
+  0%, 100% { transform: rotate(calc(var(--tilt) - 2.5deg)); }
+  50% { transform: rotate(calc(var(--tilt) + 2.5deg)); }
+}
+
+.flowers.finale {
+  animation: finalePulse 1.4s ease;
+}
+
+.flowers.finale .flower svg {
+  animation: finaleGlow 1.4s ease;
+}
+
+@keyframes finalePulse {
+  0% { transform: translateX(-50%) scale(1); }
+  35% { transform: translateX(-50%) scale(1.1); }
+  100% { transform: translateX(-50%) scale(1); }
+}
+
+@keyframes finaleGlow {
+  0% { filter: drop-shadow(0 8px 12px rgba(120, 85, 10, 0.22)); }
+  35% { filter: drop-shadow(0 0 22px rgba(255, 193, 7, 0.65)) drop-shadow(0 8px 12px rgba(120, 85, 10, 0.22)); }
+  100% { filter: drop-shadow(0 8px 12px rgba(120, 85, 10, 0.22)); }
+}
+
+/* Mensaje */
+.message-box {
+  position: absolute;
+  top: calc(var(--ftop) + var(--fh) + var(--gap));
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 2;
+  max-width: 480px;
+  width: min(92vw, 480px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  background: rgba(255, 240, 189, 0.5);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+  border-radius: 22px;
+  padding: 26px 22px;
+  box-shadow: 0 10px 30px rgba(150, 110, 0, 0.12);
+}
+
+.message-text {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #4a3900;
+  font-size: 1.15rem;
+  line-height: 1.5;
+  min-height: 4.5em;
+}
+
+.progress-dots {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: rgba(74, 57, 0, 0.22);
+  transition: width 0.3s ease, border-radius 0.3s ease, background 0.3s ease;
+}
+
+.dot.active {
+  width: 18px;
+  border-radius: 4px;
+  background: #f4c430;
+}
+
+.message-text.fade {
+  animation: textFade 0.5s ease;
+}
+
+@keyframes textFade {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.nav-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+}
+
+.nav-btn {
+  flex-shrink: 0;
+  border: none;
+  background: #f4c430;
+  color: #4a3900;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  font-size: 1.3rem;
+  line-height: 1;
+  cursor: pointer;
+  transition: transform 0.2s ease, opacity 0.3s ease;
+}
+
+.nav-btn:hover {
+  transform: scale(1.08);
+}
+
+.nav-btn:active {
+  transform: scale(0.92);
+}
+
+.nav-btn.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* Lluvia de pétalos ambiental */
+.petal-rain {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.petal {
+  --drift: 40px;
+  --spin: 360deg;
+  --op: 0.7;
+  position: absolute;
+  top: -8%;
+  opacity: 0;
+  animation-name: petalFall;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+
+.petal svg {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+@keyframes petalFall {
+  0% { transform: translateY(0) translateX(0) rotate(0deg); opacity: 0; }
+  8% { opacity: var(--op); }
+  92% { opacity: var(--op); }
+  100% { transform: translateY(118vh) translateX(var(--drift)) rotate(var(--spin)); opacity: 0; }
+}
