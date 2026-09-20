@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Para ti</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Pantalla inicial -->
+  <section id="intro" class="screen active">
+    <div class="intro-content">
+      <!--<p class="intro-hint">tengo algo para ti</p>-->
+      <button id="openBtn" class="open-btn">Abrir</button>
+    </div>
+  </section>
+
+  <!-- Pantalla principal -->
+  <section id="scene" class="screen">
+    <div class="bg-flowers" id="bgFlowers"></div>
+    <div class="flowers" id="flowers">
+      <!-- las flores se generan con JS -->
+    </div>
+
+    <div class="message-box">
+      <p id="messageText" class="message-text"></p>
+      <div class="progress-dots" id="progressDots"></div>
+      <div class="nav-row">
+        <button id="prevBtn" class="nav-btn hidden" aria-label="Anterior">‹</button>
+        <button id="nextBtn" class="nav-btn" aria-label="Siguiente">›</button>
+      </div>
+    </div>
+
+    <div class="big-flower-head" id="bigFlowerHead"></div>
+
+    <div class="petal-rain" id="petalRain"></div>
+  </section>
+
+<script src="script.js"></script>
+</body>
+</html>
