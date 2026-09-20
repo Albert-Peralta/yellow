@@ -4,7 +4,8 @@ const messages = [
   "Pero no sabia como hacerlo asi que fue lo unico que se me ocurrio ^~^",
   "Nada muy elaborado... solo unas flores amarillas",
   "Dicen que representan alegría, amistad y buena energía",
-  "Así que solo quería decirte... 🤫",
+  "Así que solo quería decirte...",
+  "jeje **** *** *** ****, but",
   "Que tengas un día tan bonito como este color 🌻",
 ];
 
