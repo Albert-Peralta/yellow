@@ -351,17 +351,16 @@ function renderProgressDots() {
 }
 
 function playFinale() {
-  // "desbloquea" el audio en moviles: hay que llamar play() dentro del mismo
-  // toque del usuario (este click), si no, al reproducirlo despues de la
-  // cuenta regresiva el navegador (sobre todo iOS) lo bloquea por seguridad.
-  // Solo si no esta ya sonando, para no cortar/reiniciar la cancion si
-  // el usuario retrocede y vuelve a avanzar mientras ya esta reproduciendose.
+  // en moviles (sobre todo iOS) solo se permite arrancar audio CON sonido
+  // dentro del toque real del usuario. Como hay una cuenta regresiva de por
+  // medio, en vez de intentar reproducir con sonido despues, arrancamos la
+  // cancion en silencio (muted) ahora mismo, dentro del click, y luego
+  // solo le quitamos el silencio al terminar la cuenta: quitar el mute a
+  // algo que ya esta sonando si esta permitido sin gesto reciente.
   if (finaleAudio.paused && !userPausedMusic) {
-    const startedAt = finaleAudio.currentTime;
-    finaleAudio.play().then(() => {
-      finaleAudio.pause();
-      finaleAudio.currentTime = startedAt;
-    }).catch(() => {});
+    finaleAudio.muted = true;
+    finaleAudio.currentTime = 0;
+    finaleAudio.play().catch(() => {});
   }
 
   const bouquets = [flowersContainer, ...sideBouquetEls];
@@ -403,15 +402,22 @@ function revealFinaleSurprise() {
   musicToggle.classList.remove('hidden');
   photoToggle.classList.remove('hidden');
 
-  // solo le damos play si no estaba ya sonando y el usuario no la pausó a propósito;
-  // asi retroceder y volver a avanzar no reinicia la cancion
-  if (finaleAudio.paused && !userPausedMusic) {
-    finaleAudio.play().catch(() => {
-      // el navegador bloqueó el autoplay con sonido;
-      // el botón de música queda visible para que lo activen con un toque
-      musicToggle.classList.add('paused');
-    });
+  if (userPausedMusic) return;
+
+  if (!finaleAudio.paused) {
+    // ya estaba sonando en silencio desde el click; ahora solo le quitamos el mute
+    finaleAudio.muted = false;
+    return;
   }
+
+  // por si acaso no se pudo arrancar antes (ej. audio no soportado),
+  // lo intentamos aqui como respaldo
+  finaleAudio.muted = false;
+  finaleAudio.play().catch(() => {
+    // el navegador bloqueó el autoplay con sonido;
+    // el botón de música queda visible para que lo activen con un toque
+    musicToggle.classList.add('paused');
+  });
 }
 
 finaleClose.addEventListener('click', () => {
@@ -424,6 +430,7 @@ photoToggle.addEventListener('click', () => {
 
 musicToggle.addEventListener('click', () => {
   if (finaleAudio.paused) {
+    finaleAudio.muted = false;
     finaleAudio.play();
     userPausedMusic = false;
     musicToggle.classList.remove('paused');
