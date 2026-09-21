@@ -157,6 +157,7 @@ const finaleOverlay = document.getElementById('finaleOverlay');
 const finaleClose = document.getElementById('finaleClose');
 const finaleAudio = document.getElementById('finaleAudio');
 const musicToggle = document.getElementById('musicToggle');
+const musicHint = document.getElementById('musicHint');
 const photoToggle = document.getElementById('photoToggle');
 const finaleCountdown = document.getElementById('finaleCountdown');
 const countdownNumber = document.getElementById('countdownNumber');
@@ -404,20 +405,33 @@ function revealFinaleSurprise() {
 
   if (userPausedMusic) return;
 
+  finaleAudio.muted = false;
+
   if (!finaleAudio.paused) {
-    // ya estaba sonando en silencio desde el click; ahora solo le quitamos el mute
-    finaleAudio.muted = false;
+    // ya estaba sonando en silencio desde el click; con quitar el mute basta
     return;
   }
 
-  // por si acaso no se pudo arrancar antes (ej. audio no soportado),
-  // lo intentamos aqui como respaldo
-  finaleAudio.muted = false;
+  // por si acaso no se pudo arrancar antes (ej. algunos navegadores dentro
+  // de apps como WhatsApp bloquean incluso el audio silenciado)
   finaleAudio.play().catch(() => {
-    // el navegador bloqueó el autoplay con sonido;
-    // el botón de música queda visible para que lo activen con un toque
-    musicToggle.classList.add('paused');
+    showMusicHint();
   });
+
+  // algunos navegadores no rechazan la promesa pero tampoco llegan a sonar
+  // (p. ej. si el telefono tiene el interruptor de silencio activado);
+  // si sigue pausado un momento despues, igual mostramos el aviso
+  setTimeout(() => {
+    if (finaleAudio.paused && !userPausedMusic) {
+      showMusicHint();
+    }
+  }, 800);
+}
+
+function showMusicHint() {
+  musicToggle.classList.add('paused');
+  musicHint.classList.remove('hidden');
+  setTimeout(() => musicHint.classList.add('hidden'), 8000);
 }
 
 finaleClose.addEventListener('click', () => {
@@ -429,6 +443,7 @@ photoToggle.addEventListener('click', () => {
 });
 
 musicToggle.addEventListener('click', () => {
+  musicHint.classList.add('hidden');
   if (finaleAudio.paused) {
     finaleAudio.muted = false;
     finaleAudio.play();
