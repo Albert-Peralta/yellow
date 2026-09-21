@@ -30,12 +30,29 @@
         <button id="prevBtn" class="nav-btn hidden" aria-label="Anterior">‹</button>
         <button id="nextBtn" class="nav-btn" aria-label="Siguiente">›</button>
       </div>
+      <div id="finaleCountdown" class="finale-countdown hidden">
+        <span class="finale-countdown-label">Espera, falta algo...</span>
+        <span id="countdownNumber" class="countdown-number">5</span>
+      </div>
     </div>
 
     <div class="big-flower-head" id="bigFlowerHead"></div>
 
     <div class="petal-rain" id="petalRain"></div>
   </section>
+
+  <!-- Sorpresa final: foto + cancion -->
+  <div class="finale-overlay" id="finaleOverlay">
+    <div class="finale-card">
+      <button id="finaleClose" class="finale-close" aria-label="Cerrar">×</button>
+      <img id="finaleImage" src="foto.jpg" alt="Una foto para ti" class="finale-photo">
+      <p class="finale-caption">🌻</p>
+    </div>
+  </div>
+
+  <audio id="finaleAudio" src="cancion.mp3" preload="auto" loop></audio>
+  <button id="musicToggle" class="music-toggle hidden" aria-label="Música">♪</button>
+  <button id="photoToggle" class="photo-toggle hidden" aria-label="Ver foto">🖼</button>
 
 <script src="script.js"></script>
 </body>

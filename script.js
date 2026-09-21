@@ -1,11 +1,14 @@
 const messages = [
   "Hola 🌼",
   "Quería regalarte algo",
-  "Pero no sabia como hacerlo asi que fue lo unico que se me ocurrio ^~^",
+  "Pero no sabia como hacerlo y me daba pena jeje",
+  "asi que fue lo único que se me ocurrió ^~^",
   "Nada muy elaborado... solo unas flores amarillas",
   "Dicen que representan alegría, amistad y buena energía",
   "Así que solo quería decirte...",
-  "jeje **** *** *** ****, but",
+  "Ya tomaste cafe jajaja",
+  "No,no ahora si",
+  "**** *** *** ****, but",
   "Que tengas un día tan bonito como este color 🌻",
 ];
 
@@ -150,6 +153,16 @@ const flowersContainer = document.getElementById('flowers');
 const bgFlowersContainer = document.getElementById('bgFlowers');
 const bigFlowerHeadContainer = document.getElementById('bigFlowerHead');
 const petalRainContainer = document.getElementById('petalRain');
+const finaleOverlay = document.getElementById('finaleOverlay');
+const finaleClose = document.getElementById('finaleClose');
+const finaleAudio = document.getElementById('finaleAudio');
+const musicToggle = document.getElementById('musicToggle');
+const photoToggle = document.getElementById('photoToggle');
+const finaleCountdown = document.getElementById('finaleCountdown');
+const countdownNumber = document.getElementById('countdownNumber');
+let sideBouquetEls = [];
+let userPausedMusic = false;
+let countdownIntervalId = null;
 const messageText = document.getElementById('messageText');
 const prevBtn = document.getElementById('prevBtn');
 const nextBtn = document.getElementById('nextBtn');
@@ -247,6 +260,8 @@ function renderFlowers() {
   rightBouquet.className = 'side-bouquet side-right';
   sceneScreen.appendChild(rightBouquet);
   buildBouquet(rightBouquet, sideLayout, 0.68, false);
+
+  sideBouquetEls = [leftBouquet, rightBouquet];
 }
 
 function renderBackgroundFlowers() {
@@ -336,11 +351,75 @@ function renderProgressDots() {
 }
 
 function playFinale() {
-  flowersContainer.classList.remove('finale');
-  void flowersContainer.offsetWidth; // reinicia la animación
-  flowersContainer.classList.add('finale');
+  const bouquets = [flowersContainer, ...sideBouquetEls];
+  bouquets.forEach((el) => {
+    el.classList.remove('finale');
+    void el.offsetWidth; // reinicia la animación
+    el.classList.add('finale');
+  });
   spawnPetals(16, { freshStart: true });
+
+  // le da tiempo de leer el mensaje y muestra una cuenta regresiva
+  // para avisar que algo mas esta por llegar, y despues revela la sorpresa
+  clearCountdown();
+  let count = 5;
+  countdownNumber.textContent = count;
+  finaleCountdown.classList.remove('hidden');
+
+  countdownIntervalId = setInterval(() => {
+    count--;
+    if (count <= 0) {
+      clearCountdown();
+      revealFinaleSurprise();
+    } else {
+      countdownNumber.textContent = count;
+    }
+  }, 1000);
 }
+
+function clearCountdown() {
+  if (countdownIntervalId) {
+    clearInterval(countdownIntervalId);
+    countdownIntervalId = null;
+  }
+  finaleCountdown.classList.add('hidden');
+}
+
+function revealFinaleSurprise() {
+  finaleOverlay.classList.add('show');
+  musicToggle.classList.remove('hidden');
+  photoToggle.classList.remove('hidden');
+
+  // solo le damos play si no estaba ya sonando y el usuario no la pausó a propósito;
+  // asi retroceder y volver a avanzar no reinicia la cancion
+  if (finaleAudio.paused && !userPausedMusic) {
+    finaleAudio.play().catch(() => {
+      // el navegador bloqueó el autoplay con sonido;
+      // el botón de música queda visible para que lo activen con un toque
+      musicToggle.classList.add('paused');
+    });
+  }
+}
+
+finaleClose.addEventListener('click', () => {
+  finaleOverlay.classList.remove('show');
+});
+
+photoToggle.addEventListener('click', () => {
+  finaleOverlay.classList.add('show');
+});
+
+musicToggle.addEventListener('click', () => {
+  if (finaleAudio.paused) {
+    finaleAudio.play();
+    userPausedMusic = false;
+    musicToggle.classList.remove('paused');
+  } else {
+    finaleAudio.pause();
+    userPausedMusic = true;
+    musicToggle.classList.add('paused');
+  }
+});
 
 function showMessage(index) {
   messageText.classList.remove('fade');
@@ -373,6 +452,8 @@ openBtn.addEventListener('click', () => {
 
 prevBtn.addEventListener('click', () => {
   if (step > 0) {
+    finaleOverlay.classList.remove('show');
+    clearCountdown();
     step--;
     showMessage(step);
   }

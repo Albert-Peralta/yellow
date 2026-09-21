@@ -232,7 +232,12 @@ html, body {
   animation: finalePulse 1.4s ease;
 }
 
-.flowers.finale .flower svg {
+.side-bouquet.finale {
+  animation: finalePulseSide 1.4s ease;
+}
+
+.flowers.finale .flower svg,
+.side-bouquet.finale .flower svg {
   animation: finaleGlow 1.4s ease;
 }
 
@@ -240,6 +245,12 @@ html, body {
   0% { transform: translateX(-50%) scale(1); }
   35% { transform: translateX(-50%) scale(1.1); }
   100% { transform: translateX(-50%) scale(1); }
+}
+
+@keyframes finalePulseSide {
+  0% { transform: scale(1); }
+  35% { transform: scale(1.15); }
+  100% { transform: scale(1); }
 }
 
 @keyframes finaleGlow {
@@ -353,17 +364,24 @@ html, body {
   left: 50%;
   bottom: 0%;
   transform: translateX(-50%);
+  transform-origin: 50% 100%;
   width: min(78vw, 460px);
   z-index: 0;
   opacity: 0.92;
   pointer-events: none;
   filter: drop-shadow(0 10px 18px rgba(120, 85, 10, 0.18));
+  animation: bigFlowerSway 7s ease-in-out infinite;
 }
 
 .big-flower-head svg {
   width: 100%;
   height: auto;
   display: block;
+}
+
+@keyframes bigFlowerSway {
+  0%, 100% { transform: translateX(-50%) rotate(-2.5deg) scale(1); }
+  50% { transform: translateX(-50%) rotate(2.5deg) scale(1.02); }
 }
 
 /* Lluvia de pétalos ambiental */
@@ -398,4 +416,174 @@ html, body {
   8% { opacity: var(--op); }
   92% { opacity: var(--op); }
   100% { transform: translateY(118vh) translateX(var(--drift)) rotate(var(--spin)); opacity: 0; }
+}
+
+/* Sorpresa final: foto + cancion */
+.finale-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  background: rgba(74, 57, 0, 0.55);
+  -webkit-backdrop-filter: blur(4px);
+  backdrop-filter: blur(4px);
+  padding: 24px;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+
+.finale-overlay.show {
+  display: flex;
+  opacity: 1;
+}
+
+.finale-card {
+  position: relative;
+  background: #fffdf5;
+  border-radius: 20px;
+  padding: 18px;
+  max-width: min(90vw, 420px);
+  width: 100%;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.35);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  transform: scale(0.85);
+  animation: finaleCardPop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+@keyframes finaleCardPop {
+  to { transform: scale(1); }
+}
+
+.finale-photo {
+  width: 100%;
+  border-radius: 14px;
+  display: block;
+  max-height: 60vh;
+  object-fit: cover;
+  background: #f4ecd0;
+}
+
+.finale-caption {
+  font-size: 1.4rem;
+}
+
+.finale-close {
+  position: absolute;
+  top: -14px;
+  right: -14px;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: none;
+  background: #f4c430;
+  color: #4a3900;
+  font-size: 1.2rem;
+  line-height: 1;
+  cursor: pointer;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
+  transition: transform 0.2s ease;
+}
+
+.finale-close:hover {
+  transform: scale(1.08);
+}
+
+.music-toggle {
+  position: fixed;
+  bottom: 18px;
+  right: 18px;
+  z-index: 21;
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  border: none;
+  background: #f4c430;
+  color: #4a3900;
+  font-size: 1.3rem;
+  cursor: pointer;
+  box-shadow: 0 6px 16px rgba(120, 85, 10, 0.3);
+  transition: transform 0.2s ease, opacity 0.3s ease;
+  animation: musicPulse 2s ease-in-out infinite;
+}
+
+.music-toggle:hover {
+  transform: scale(1.08);
+}
+
+.music-toggle.hidden {
+  display: none;
+}
+
+.music-toggle.paused {
+  animation: none;
+  opacity: 0.6;
+}
+
+@keyframes musicPulse {
+  0%, 100% { box-shadow: 0 6px 16px rgba(120, 85, 10, 0.3); }
+  50% { box-shadow: 0 6px 22px rgba(244, 196, 48, 0.7); }
+}
+
+.photo-toggle {
+  position: fixed;
+  bottom: 18px;
+  left: 18px;
+  z-index: 21;
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  border: none;
+  background: #f4c430;
+  color: #4a3900;
+  font-size: 1.2rem;
+  cursor: pointer;
+  box-shadow: 0 6px 16px rgba(120, 85, 10, 0.3);
+  transition: transform 0.2s ease, opacity 0.3s ease;
+}
+
+.photo-toggle:hover {
+  transform: scale(1.08);
+}
+
+.photo-toggle.hidden {
+  display: none;
+}
+
+/* Cuenta regresiva antes de la sorpresa final */
+.finale-countdown {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  color: #4a3900;
+  font-size: 0.95rem;
+  animation: textFade 0.5s ease;
+}
+
+.finale-countdown.hidden {
+  display: none;
+}
+
+.countdown-number {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: #f4c430;
+  color: #4a3900;
+  font-weight: 700;
+  font-size: 0.9rem;
+  animation: countdownPulse 1s ease infinite;
+}
+
+@keyframes countdownPulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.15); }
 }
