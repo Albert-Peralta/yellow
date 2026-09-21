@@ -351,6 +351,19 @@ function renderProgressDots() {
 }
 
 function playFinale() {
+  // "desbloquea" el audio en moviles: hay que llamar play() dentro del mismo
+  // toque del usuario (este click), si no, al reproducirlo despues de la
+  // cuenta regresiva el navegador (sobre todo iOS) lo bloquea por seguridad.
+  // Solo si no esta ya sonando, para no cortar/reiniciar la cancion si
+  // el usuario retrocede y vuelve a avanzar mientras ya esta reproduciendose.
+  if (finaleAudio.paused && !userPausedMusic) {
+    const startedAt = finaleAudio.currentTime;
+    finaleAudio.play().then(() => {
+      finaleAudio.pause();
+      finaleAudio.currentTime = startedAt;
+    }).catch(() => {});
+  }
+
   const bouquets = [flowersContainer, ...sideBouquetEls];
   bouquets.forEach((el) => {
     el.classList.remove('finale');
